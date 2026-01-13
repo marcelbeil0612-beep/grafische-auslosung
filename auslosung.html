@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <title>Team-Auslosung – Fußballfeld</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #0b7a3b, #02401f);
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    h1 {
+      text-align: center;
+      margin: 0.5rem 0;
+      font-size: 1.5rem;
+    }
+
+    .container {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+
+    .field-wrapper {
+      flex: 2;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 0.5rem;
+    }
+
+    .field {
+      position: relative;
+      width: min(900px, 95vw);
+      aspect-ratio: 16 / 9;
+      border: 4px solid #ffffffaa;
+      border-radius: 16px;
+      box-shadow: 0 0 20px #00000066;
+      background: repeating-linear-gradient(
+        to bottom,
+        #0a6b34,
+        #0a6b34 8px,
+        #0d7a3c 8px,
+        #0d7a3c 16px
+      );
+      overflow: hidden;
+    }
+
+    /* Linien auf dem Feld */
+    .mid-line {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      width: 2px;
+      height: 100%;
+      background: #ffffffaa;
+      transform: translateX(-50%);
+    }
+
+    .center-circle {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 22%;
+      height: 22%;
+      border-radius: 50%;
+      border: 2px solid #ffffffaa;
+      transform: translate(-50%, -50%);
+    }
+
+    .goal-area {
+      position: absolute;
+      top: 25%;
+      right: 0;
+      width: 16%;
+      height: 50%;
+      border: 2px solid #ffffffaa;
+      border-right: none;
+    }
+
+    .goal {
+      position: absolute;
+      top: 35%;
+      right: 0;
+      width: 4%;
+      height: 30%;
+      border: 3px solid #ffffff;
+      border-right: none;
+      background: #ffffff22;
+      box-shadow: -4px 0 10px #00000088 inset;
+    }
+
+    /* Ball */
+    .ball {
+      position: absolute;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, #ffffff, #dcdcdc);
+      border: 2px solid #000000dd;
+      box-shadow: 0 0 8px #00000088;
+      left: 20%;
+      bottom: 20%;
+      transform: translate(-50%, 50%);
+    }
+
+    .ball.shoot {
+      animation: shoot 0.9s ease-out forwards;
+    }
+
+    @keyframes shoot {
+      0% {
+        transform: translate(-50%, 50%);
+        left: 20%;
+        bottom: 20%;
+      }
+      60% {
+        left: 75%;
+        bottom: 55%;
+        transform: translate(-50%, 50%) scale(1.05);
+      }
+      100% {
+        left: 83%;
+        bottom: 50%;
+        transform: translate(-50%, 50%) scale(0.7);
+      }
+    }
+
+    /* Namens-Popup */
+    .name-popup {
+      position: absolute;
+      top: 8%;
+      right: 10%;
+      padding: 0.5rem 1rem;
+      background: #111827ee;
+      border-radius: 999px;
+      border: 2px solid #fbbf24;
+      box-shadow: 0 0 14px #000000aa;
+      font-size: 1.2rem;
+      opacity: 0;
+      transform: translateY(-10px);
+      transition: opacity 0.25s ease, transform 0.25s ease;
+      white-space: nowrap;
+    }
+
+    .name-popup.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Steuerung unten */
+    .bottom {
+      flex: 2;
+      background: #020617dd;
+      border-top: 1px solid #ffffff33;
+      padding: 0.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .controls {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    button {
+      background: #22c55e;
+      border: none;
+      border-radius: 999px;
+      padding: 0.5rem 1.5rem;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      color: #022c14;
+      box-shadow: 0 8px 20px #16a34a55;
+      transition: transform 0.1s ease, box-shadow 0.1s ease, background 0.2s ease;
+    }
+
+    button:active {
+      transform: translateY(1px) scale(0.99);
+      box-shadow: 0 4px 10px #16a34a66;
+    }
+
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    .info {
+      text-align: center;
+      font-size: 0.9rem;
+      color: #e5e7eb;
+    }
+
+    /* Tabellen */
+    .tables {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+    }
+
+    .team-table {
+      background: #020617;
+      border-radius: 0.75rem;
+      border: 1px solid #4b5563;
+      padding: 0.35rem 0.5rem 0.5rem;
+      font-size: 0.8rem;
+    }
+
+    .team-header {
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+      border-bottom: 1px solid #6b7280;
+      padding-bottom: 0.2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .team-header span {
+      font-size: 0.75rem;
+      color: #9ca3af;
+    }
+
+    ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      max-height: 120px;
+      overflow-y: auto;
+    }
+
+    li {
+      padding: 0.1rem 0;
+    }
+
+    .pill {
+      display: inline-block;
+      padding: 0.1rem 0.4rem;
+      border-radius: 999px;
+      background: #0f172a;
+      border: 1px solid #1f2937;
+      font-size: 0.7rem;
+      margin-left: 0.25rem;
+      color: #9ca3af;
+    }
+
+    @media (max-width: 900px) {
+      .tables {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      .team-table:last-child {
+        grid-column: span 2;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>Team-Auslosung – Bolzplatz Edition</h1>
+  <div class="container">
+    <div class="field-wrapper">
+      <div class="field">
+        <div class="mid-line"></div>
+        <div class="center-circle"></div>
+        <div class="goal-area"></div>
+        <div class="goal"></div>
+        <div class="ball" id="ball"></div>
+        <div class="name-popup" id="namePopup">Spielername</div>
+      </div>
+    </div>
+
+    <div class="bottom">
+      <div class="controls">
+        <button id="drawButton">Nächsten Spieler ziehen</button>
+        <button id="resetButton">Reset</button>
+      </div>
+      <div class="info" id="infoText">
+        Drücke „Nächsten Spieler ziehen", um die Auslosung zu starten. Ideal für Bildschirmaufnahme.
+      </div>
+
+      <div class="tables" id="tables">
+        <!-- Tabellen werden durch JS gefüllt -->
+      </div>
+    </div>
+  </div>
+
+  <script>
+    window.addEventListener("DOMContentLoaded", () => {
+      // Teamköpfe (Erwachsene)
+      const teamHeads = ["Božo", "Daniel", "Andi", "Marcel", "Damir"];
+
+      // Spieler – alle Namen (Zulosung zufällig)
+      let allPlayers = [
+        "Alessandro",
+        "Maxim",
+        "Luka",
+        "Mathias",
+        "Mayar",
+        "Erik",
+        "Edin",
+        "Amin",
+        "Elias",
+        "Tarik",
+        "Mattia",
+        "Matthias G",
+        "Jonas",
+        "Max",
+        "Tijan",
+      ];
+
+      let remainingPlayers = [...allPlayers];
+      let assignments = {}; // head -> [spieler]
+      let drawIndex = 0;
+      let isAnimating = false;
+
+      const ball = document.getElementById("ball");
+      const popup = document.getElementById("namePopup");
+      const drawButton = document.getElementById("drawButton");
+      const resetButton = document.getElementById("resetButton");
+      const infoText = document.getElementById("infoText");
+      const tablesContainer = document.getElementById("tables");
+
+      function initAssignments() {
+        assignments = {};
+        teamHeads.forEach((head) => {
+          assignments[head] = [];
+        });
+      }
+
+      function shuffle(array) {
+        const a = [...array];
+        for (let i = a.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [a[i], a[j]] = [a[j], a[i]];
+        }
+        return a;
+      }
+
+      function buildTables() {
+        tablesContainer.innerHTML = "";
+        teamHeads.forEach((head) => {
+          const teamDiv = document.createElement("div");
+          teamDiv.className = "team-table";
+
+          const header = document.createElement("div");
+          header.className = "team-header";
+          const title = document.createElement("span");
+          title.textContent = `Team ${head}`;
+          const count = document.createElement("span");
+          count.textContent = `${assignments[head].length} Spieler`;
+          header.appendChild(title);
+          header.appendChild(count);
+
+          const list = document.createElement("ul");
+          assignments[head].forEach((p, index) => {
+            const li = document.createElement("li");
+            li.textContent = `${index + 1}. ${p}`;
+            list.appendChild(li);
+          });
+
+          teamDiv.appendChild(header);
+          teamDiv.appendChild(list);
+          tablesContainer.appendChild(teamDiv);
+        });
+      }
+
+      function reset() {
+        remainingPlayers = shuffle(allPlayers);
+        initAssignments();
+        drawIndex = 0;
+        isAnimating = false;
+        popup.classList.remove("visible");
+        ball.classList.remove("shoot");
+        buildTables();
+        drawButton.disabled = false;
+        infoText.textContent =
+          "Drücke „Nächsten Spieler ziehen", um die Auslosung zu starten. Ideal für Bildschirmaufnahme.";
+      }
+
+      function drawNextPlayer() {
+        if (isAnimating) return;
+        if (remainingPlayers.length === 0) {
+          infoText.textContent = "Alle Spieler sind verteilt. 🎉";
+          drawButton.disabled = true;
+          return;
+        }
+
+        isAnimating = true;
+        drawButton.disabled = true;
+        popup.classList.remove("visible");
+
+        // Random Spieler aus Rest
+        const randomIndex = Math.floor(Math.random() * remainingPlayers.length);
+        const player = remainingPlayers.splice(randomIndex, 1)[0];
+
+        // Team bestimmen (Round-Robin nach Ziehungsnummer)
+        const teamIndex = drawIndex % teamHeads.length;
+        const head = teamHeads[teamIndex];
+        assignments[head].push(player);
+        drawIndex++;
+
+        // Ball animieren
+        void ball.offsetWidth; // reflow für Neustart
+        ball.classList.remove("shoot");
+        setTimeout(() => {
+          ball.classList.add("shoot");
+        }, 20);
+
+        // Popup nach kurzer Zeit anzeigen
+        setTimeout(() => {
+          popup.textContent = player;
+          popup.classList.add("visible");
+        }, 500);
+
+        // Nach Animation Tabellen aktualisieren
+        setTimeout(() => {
+          buildTables();
+          isAnimating = false;
+          if (remainingPlayers.length === 0) {
+            infoText.textContent =
+              "Alle Spieler sind verteilt. 🎉 Aufnahme kann beendet werden.";
+            drawButton.disabled = true;
+          } else {
+            infoText.textContent = `${remainingPlayers.length} Spieler verbleiben.`;
+            drawButton.disabled = false;
+          }
+        }, 950);
+      }
+
+      drawButton.addEventListener("click", drawNextPlayer);
+      resetButton.addEventListener("click", reset);
+
+      // Startzustand
+      reset();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,497 @@
+:root {
+  color-scheme: dark;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background:
+    radial-gradient(circle at top, #0f172a 0, #022c22 35%, #01110c 75%, #000000 100%);
+  color: #fff;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.app-root {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: min(1400px, 100vw);
+  padding: 1rem 0.5rem 1.5rem;
+}
+
+.app-header {
+  text-align: center;
+  margin: 0.7rem 0;
+}
+
+.app-header h1 {
+  margin: 0;
+  font-size: 1.6rem;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.field-wrapper {
+  flex: 2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0.5rem;
+}
+
+.field {
+  position: relative;
+  width: min(1200px, 96vw);
+  aspect-ratio: 16 / 9;
+  border: 4px solid #ffffffaa;
+  border-radius: 18px;
+  box-shadow:
+    0 0 40px #000000cc,
+    0 0 120px #16a34a55;
+  background: repeating-linear-gradient(
+    to bottom,
+    #0a6b34,
+    #0a6b34 8px,
+    #0d7a3c 8px,
+    #0d7a3c 16px
+  );
+  overflow: hidden;
+}
+
+.mid-line {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 2px;
+  height: 100%;
+  background: #ffffffaa;
+  transform: translateX(-50%);
+}
+
+.center-circle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 22%;
+  height: 22%;
+  border-radius: 50%;
+  border: 2px solid #ffffffaa;
+  transform: translate(-50%, -50%);
+}
+
+.goal-area {
+  position: absolute;
+  top: 25%;
+  right: 0;
+  width: 16%;
+  height: 50%;
+  border: 2px solid #ffffffaa;
+  border-right: none;
+}
+
+.goal {
+  position: absolute;
+  top: 35%;
+  right: 0;
+  width: 4%;
+  height: 30%;
+  border: 3px solid #ffffff;
+  border-right: none;
+  background: #ffffff22;
+  box-shadow: 0 0 10px #00000088 inset;
+}
+
+/* Mittlere Spieler-Liste */
+
+.player-column {
+  position: absolute;
+  top: 16%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 20%;
+  height: 70%;
+  background: #020617dd;
+  border-radius: 12px;
+  border: 1px solid #4b5563;
+  box-shadow: 0 0 12px #000000aa;
+  padding: 0.4rem 0.6rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.player-column-title {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #a7f3d0;
+  margin-bottom: 0.25rem;
+  text-align: center;
+}
+
+.player-column ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  overflow-y: visible;
+  font-size: 0.75rem;
+}
+
+.player-column li {
+  padding: 0.05rem 0;
+}
+
+.player-column li.assigned {
+  text-decoration: line-through;
+  color: #6b7280;
+}
+
+/* Logo-Panels mit Schiebetüren */
+
+.logo-panel {
+  position: absolute;
+  top: 18%;
+  width: 32%;
+  height: 64%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.logo-panel.left {
+  left: 6%;
+}
+
+.logo-panel.right {
+  right: 6%;
+}
+
+.panel-title {
+  position: absolute;
+  top: 10%;
+  transform: translateY(-50%);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #f9fafb;
+  text-shadow: 0 2px 6px #000000aa;
+}
+
+.panel-title-left {
+  left: 22%;
+  transform: translate(-50%, -50%);
+}
+
+.panel-title-right {
+  right: 22%;
+  transform: translate(50%, -50%);
+}
+
+.logo-inner {
+  position: relative;
+  background: #020617ee;
+  border-radius: 16px;
+  padding: 0.75rem;
+  border: 2px solid #22c55e;
+  box-shadow: 0 0 18px #000000aa;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.logo-inner::before {
+  content: "";
+  position: absolute;
+  inset: 0.4rem;
+  border-radius: 12px;
+  background:
+    radial-gradient(circle at 20% 20%, #ffffff55, transparent 60%),
+    radial-gradient(circle at 80% 30%, #ffffff33, transparent 60%),
+    radial-gradient(circle at 50% 80%, #ffffff44, transparent 65%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Türen */
+
+.door {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 50%;
+  background: #ffffff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  border: 3px solid #065f46; /* grüner Außenrand */
+  box-shadow: inset 0 0 0 2px #000000; /* dünner schwarzer Innenrand */
+  transition: transform 1s ease-in-out;
+}
+
+.door-left {
+  left: 0;
+}
+
+.door-right {
+  right: 0;
+}
+
+/* Türgriffe */
+
+.door-left::after,
+.door-right::after {
+  content: "";
+  position: absolute;
+  width: 8px;
+  height: 28px;
+  background: #000000;
+  border-radius: 4px;
+}
+
+.door-left::after {
+  right: 10px;
+}
+
+.door-right::after {
+  left: 10px;
+}
+
+/* Logo auf den Türen (kleiner, mittig) */
+
+.door-logo {
+  width: 70%;
+  height: auto;
+  object-fit: contain;
+}
+
+/* Öffnen: Türen fahren auseinander */
+
+.logo-panel.open .door-left {
+  transform: translateX(-100%);
+}
+
+.logo-panel.open .door-right {
+  transform: translateX(100%);
+}
+
+/* Ticket mit Namen dahinter */
+
+.ticket {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  /* Name kommt erst NACH dem Nebel, daher Verzögerung */
+  transition: opacity 0.5s ease 1.1s;
+}
+
+.ticket span {
+  display: inline-block;
+  position: relative;
+  overflow: hidden;
+  padding: 0.5rem 0.9rem;
+  background: #fefce8;
+  color: #111827;
+  border-radius: 10px;
+  box-shadow: 0 6px 14px #00000099;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+/* Wenn Panel offen ist, Ticket sichtbar */
+
+.logo-panel.open .ticket {
+  opacity: 1;
+}
+
+.logo-panel.open .ticket span {
+  /* Schreib-Effekt von links nach rechts */
+  animation: writeName 0.9s steps(20, end) 1.1s forwards;
+}
+
+/* Beschriftung unten im Panel */
+
+.label {
+  display: none;
+}
+
+/* Unterer Bereich mit Buttons und Teams */
+
+.bottom {
+  flex: 0;
+  background: #020617f2;
+  border-radius: 18px;
+  border: 1px solid #22c55e44;
+  padding: 0.75rem 1rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  width: min(1200px, 96vw);
+  margin: 0.6rem auto 0;
+  box-shadow: 0 0 24px #000000bb;
+}
+
+.controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+button {
+  background: linear-gradient(to right, #22c55e, #4ade80);
+  border: none;
+  border-radius: 999px;
+  padding: 0.55rem 1.8rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  color: #022c14;
+  box-shadow: 0 10px 26px #16a34a66;
+  transition:
+    transform 0.08s ease,
+    box-shadow 0.08s ease,
+    filter 0.15s ease;
+  white-space: nowrap;
+}
+
+button.secondary {
+  background: linear-gradient(to right, #0f172a, #020617);
+  color: #e5e7eb;
+  border: 1px solid #64748b;
+  box-shadow: 0 6px 18px #00000099;
+}
+
+button:hover:not(:disabled) {
+  filter: brightness(1.05);
+}
+
+button:active:not(:disabled) {
+  transform: translateY(1px) scale(0.99);
+  box-shadow: 0 6px 16px #16a34a66;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.info {
+  text-align: center;
+  font-size: 0.9rem;
+  color: #e5e7eb;
+  margin-top: 0.1rem;
+}
+
+.tables {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0.5rem;
+  margin-top: 0.4rem;
+}
+
+.team-table {
+  background: #020617;
+  border-radius: 0.75rem;
+  border: 1px solid #4b5563;
+  padding: 0.35rem 0.5rem 0.5rem;
+  font-size: 0.8rem;
+}
+
+.team-header {
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+  border-bottom: 1px solid #6b7280;
+  padding-bottom: 0.2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.team-header span {
+  font-size: 0.75rem;
+  color: #9ca3af;
+}
+
+ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 120px;
+  overflow-y: auto;
+}
+
+li {
+  padding: 0.1rem 0;
+}
+
+@keyframes fogInOut {
+  0% {
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.9;
+  }
+  60% {
+    opacity: 0.7;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes writeName {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+.logo-panel.open .logo-inner::before {
+  animation: fogInOut 1.2s ease-out forwards;
+}
+
+@media (max-width: 900px) {
+  .tables {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .team-table:last-child {
+    grid-column: span 2;
+  }
+}
+
+@media (min-width: 1600px) {
+  .field,
+  .bottom {
+    transform: scale(1.05);
+    transform-origin: top center;
+  }
+}
+
+@media (min-width: 1900px) {
+  .field,
+  .bottom {
+    transform: scale(1.15);
+    transform-origin: top center;
+  }
+}
+
