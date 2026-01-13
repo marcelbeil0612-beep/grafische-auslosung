@@ -1,31 +1,9 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useMemo, useEffect } from "react";
 import "./App.css";
-
-const teamHeads = ["Božo", "Daniel", "Andi", "Marcel", "Damir"];
-
-// Spieler mit versteckter Stärke (nicht im UI anzeigen!)
-const players = [
-  { name: "Alessandro", strength: 4 },
-  { name: "Maxim", strength: 4 },
-  { name: "Luka", strength: 4 },
-  { name: "Mathias", strength: 4 },
-  { name: "Mayar", strength: 4 },
-  { name: "Erik", strength: 3 },
-  { name: "Edin", strength: 3 },
-  { name: "Amin", strength: 3 },
-  { name: "Elias", strength: 3 },
-  { name: "Tarik", strength: 3 },
-  { name: "Mattia", strength: 2 },
-  { name: "Matthias G", strength: 2 },
-  { name: "Jonas", strength: 2 },
-  { name: "Steini", strength: 2 },
-  { name: "Tijan", strength: 2 },
-];
-
-const TOTAL_PLAYERS = players.length;
+import { useStore } from "./stores/useStore";
 
 // faire Verteilung nach Stärke
-function buildBalancedSequence() {
+function buildBalancedSequence(players, teamHeads) {
   // Spieler nach Stärke gruppieren
   const strengthMap = {};
   players.forEach((p) => {
@@ -93,7 +71,7 @@ function buildBalancedSequence() {
   return sequence;
 }
 
-function createEmptyTeams() {
+function createEmptyTeams(teamHeads) {
   const t = {};
   teamHeads.forEach((head) => (t[head] = []));
   return t;
@@ -109,8 +87,20 @@ function shuffleNames(names) {
 }
 
 function ShowView() {
-  const [sequence, setSequence] = useState(() => buildBalancedSequence());
-  const [teams, setTeams] = useState(() => createEmptyTeams());
+  // Daten aus Store holen
+  const { players, teams: storeTeams } = useStore();
+
+  // Team-Namen aus Store-Teams ableiten
+  const teamHeads = useMemo(() => storeTeams.map((t) => t.name), [storeTeams]);
+
+  // Sequence basierend auf aktuellen Daten erstellen
+  const initialSequence = useMemo(
+    () => buildBalancedSequence(players, teamHeads),
+    [players, teamHeads]
+  );
+
+  const [sequence, setSequence] = useState(initialSequence);
+  const [teams, setTeams] = useState(() => createEmptyTeams(teamHeads));
   const [drawIndex, setDrawIndex] = useState(0);
 
   const [currentPlayer, setCurrentPlayer] = useState("");
@@ -124,11 +114,13 @@ function ShowView() {
   const revealSoundRef = useRef(null);
 
   // zufällige Anzeige-Reihenfolge in der Mittelliste
-  const [playerOrder] = useState(() =>
-    shuffleNames(players.map((p) => p.name))
+  const playerOrder = useMemo(
+    () => shuffleNames(players.map((p) => p.name)),
+    [players]
   );
 
-  const remaining = TOTAL_PLAYERS - drawIndex;
+  const totalPlayers = players.length;
+  const remaining = totalPlayers - drawIndex;
   const finished = drawIndex >= sequence.length;
 
   // Menge aller bereits zugeordneten Spieler
@@ -136,9 +128,23 @@ function ShowView() {
     teamHeads.flatMap((head) => teams[head])
   );
 
+  // Sequence neu generieren, wenn sich players oder teams ändern
+  useEffect(() => {
+    const newSequence = buildBalancedSequence(players, teamHeads);
+    setSequence(newSequence);
+    setTeams(createEmptyTeams(teamHeads));
+    setDrawIndex(0);
+    setCurrentPlayer("");
+    setCurrentHead("");
+    setLeftOpen(false);
+    setRightOpen(false);
+    setIsAnimating(false);
+  }, [players, teamHeads]);
+
   function handleReset() {
-    setSequence(buildBalancedSequence());
-    setTeams(createEmptyTeams());
+    const newSequence = buildBalancedSequence(players, teamHeads);
+    setSequence(newSequence);
+    setTeams(createEmptyTeams(teamHeads));
     setDrawIndex(0);
     setCurrentPlayer("");
     setCurrentHead("");
