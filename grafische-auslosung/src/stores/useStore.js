@@ -93,24 +93,44 @@ export const useStore = create(
         }));
       },
       setTeamCount: (count) => {
+        // Wert parsen und validieren
+        const newCount = Number(count);
+        if (isNaN(newCount) || newCount < 2) {
+          return; // Ungültiger Wert, abbrechen
+        }
+        
         const currentTeams = get().teams;
-        if (count > currentTeams.length) {
+        const currentLength = currentTeams.length;
+        
+        if (newCount > currentLength) {
           // Teams hinzufügen
           const newTeams = [];
-          for (let i = currentTeams.length; i < count; i++) {
+          // Farbe-Palette für neue Teams
+          const colors = ["#22c55e", "#3b82f6", "#a855f7", "#f59e0b", "#ef4444", "#06b6d4", "#84cc16", "#f97316"];
+          
+          for (let i = currentLength; i < newCount; i++) {
+            const colorIndex = i % colors.length;
             newTeams.push({
               id: Date.now().toString() + i + Math.random().toString(36).substr(2, 9),
               name: `Team ${i + 1}`,
-              color: `#${Math.floor(Math.random() * 16777215).toString(16)}`,
+              color: colors[colorIndex],
             });
           }
           set((state) => ({
             teams: [...state.teams, ...newTeams],
+            config: {
+              ...state.config,
+              teamCount: newCount,
+            },
           }));
-        } else if (count < currentTeams.length) {
-          // Teams entfernen
+        } else if (newCount < currentLength) {
+          // Teams entfernen (von hinten)
           set((state) => ({
-            teams: state.teams.slice(0, count),
+            teams: state.teams.slice(0, newCount),
+            config: {
+              ...state.config,
+              teamCount: newCount,
+            },
           }));
         }
       },

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useStore } from "../stores/useStore";
 
 function TeamsEditor() {
-  const { teams, addTeam, updateTeam, deleteTeam, setTeamCount, config } = useStore();
+  const { teams, addTeam, updateTeam, deleteTeam, setTeamCount } = useStore();
   const [editingId, setEditingId] = useState(null);
   const [formData, setFormData] = useState({ name: "", color: "#22c55e", icon: "" });
 
@@ -40,10 +40,13 @@ function TeamsEditor() {
   };
 
   const handleTeamCountChange = (e) => {
-    const count = Number(e.target.value);
-    if (count >= 1 && count <= 10) {
-      setTeamCount(count);
+    const value = e.target.value;
+    // Leeres Feld: nichts tun (optional)
+    if (value === "") {
+      return;
     }
+    const count = Number(value);
+    setTeamCount(count);
   };
 
   return (
@@ -65,9 +68,9 @@ function TeamsEditor() {
         </label>
         <input
           type="number"
-          min="1"
+          min="2"
           max="10"
-          value={config.teamCount}
+          value={teams.length}
           onChange={handleTeamCountChange}
           style={{
             padding: "0.5rem",
