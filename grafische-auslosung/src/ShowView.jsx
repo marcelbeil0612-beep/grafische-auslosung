@@ -88,7 +88,7 @@ function shuffleNames(names) {
 
 function ShowView() {
   // Daten aus Store holen
-  const { players, teams: storeTeams } = useStore();
+  const { players, teams: storeTeams, config } = useStore();
 
   // Team-Namen aus Store-Teams ableiten
   const teamHeads = useMemo(() => storeTeams.map((t) => t.name), [storeTeams]);

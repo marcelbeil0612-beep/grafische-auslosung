@@ -1,6 +1,7 @@
 import { useState } from "react";
 import PlayersEditor from "./components/PlayersEditor";
 import TeamsEditor from "./components/TeamsEditor";
+import SettingsEditor from "./components/SettingsEditor";
 
 function EditorView() {
   const [activeTab, setActiveTab] = useState("players");
@@ -36,10 +37,25 @@ function EditorView() {
         >
           Teams
         </button>
+        <button
+          onClick={() => setActiveTab("settings")}
+          style={{
+            padding: "0.5rem 1.5rem",
+            background: activeTab === "settings" ? "#22c55e" : "#020617",
+            color: activeTab === "settings" ? "#022c14" : "#e5e7eb",
+            border: "none",
+            borderRadius: "999px",
+            fontWeight: 600,
+            cursor: "pointer",
+          }}
+        >
+          Einstellungen
+        </button>
       </div>
 
       {activeTab === "players" && <PlayersEditor />}
       {activeTab === "teams" && <TeamsEditor />}
+      {activeTab === "settings" && <SettingsEditor />}
     </div>
   );
 }
